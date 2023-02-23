@@ -75,7 +75,8 @@ const getPositon = () => {
   });
 };
 
-// async function luon return 1 Promise
+// async function luon return 1 Promise vì JS chưa biết sẽ return về cái gì nên kết quả của return sẽ là fullfilled của Promise
+// kể cả có lỗi vẫn nhảy vào then, nếu muốn lỗi có ở catch thì phải throw
 const whereAmI = async () => {
   try {
     // Geolocation
@@ -91,20 +92,71 @@ const whereAmI = async () => {
     const res = await fetch(
       `https://restcountries.com/v2/name/${dataGeo.country}`
     );
-    if (!res.ok) throw new Error('Problem getting country');
+    if (!res.ok) throw new Error('Problem getting country'); // lỗi này nếu ko đc throw bên dưới catch thì dòng 113 ko nhận đc lỗi ở catch
 
-    console.log('🚀 ~ file: codingChallenge.js:51 ~ whereAmI ~ res:', res);
     // giống hệt như thế này
     // fetch(`https://restcountries.com/v2/name/${country}`).then(res => {
     //   console.log(res);
     // });
 
     const data = await res.json();
-    console.log('🚀 ~ file: codingChallenge.js:57 ~ whereAmI ~ data:', data);
     renderCountry(data[0]);
+
+    return `You're in ${dataGeo.city}, ${dataGeo.country}`;
+  } catch (error) {
+    console.error(error);
+    // Reject promise returned async function
+    throw error;
+  }
+};
+
+console.log('1: Will get location');
+// btn.addEventListener('click', whereAmI);
+// cách này sẽ lẫn lộn async với then catch nên ko hay, ta sẽ sử dụng IIFE
+// whereAmI()
+//   .then(text => {
+//     console.log(`2: ${text}`);
+//   })
+//   .catch(err => console.log(`2: ${err.message}`))
+//   .finally(() => console.log('3: Finished getting location'));
+
+console.log('1: Will get location');
+(async () => {
+  try {
+    const text = await whereAmI();
+    console.log(`2: ${text}`);
+  } catch (error) {
+    console.log(`2: ${error.message}`);
+  }
+  console.log('3: Finished getting location');
+})();
+
+const getJSON = (url, errorMsg = 'Something went wrong') => {
+  return fetch(url).then(response => {
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+
+    return response.json();
+  });
+};
+
+const get3Countries = async (c1, c2, c3) => {
+  try {
+    // sẽ đợi nhau mà ko cần thiết
+    // const [data1] = await getJSON(`https://restcountries.com/v2/name/${c1}`);
+    // const [data2] = await getJSON(`https://restcountries.com/v2/name/${c2}`);
+    // const [data3] = await getJSON(`https://restcountries.com/v2/name/${c3}`);
+
+    // chạy song song với nhau
+    const data = await Promise.all([
+      getJSON(`https://restcountries.com/v2/name/${c1}`),
+      getJSON(`https://restcountries.com/v2/name/${c2}`),
+      getJSON(`https://restcountries.com/v2/name/${c3}`),
+    ]);
+
+    console.log(data.map(d => d[0].capital));
   } catch (error) {
     console.error(error);
   }
 };
-btn.addEventListener('click', whereAmI);
-console.log('FIRST');
+
+get3Countries('portugal', 'canada', 'japan');
