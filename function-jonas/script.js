@@ -106,3 +106,47 @@ book.call(swiss, 583, "Mary Cooper");
 const flightData = [555, "George"];
 
 book.apply(swiss, flightData);
+
+// BIND METHOD
+// return về function chứ ko chạy function đó với this trỏ về tham số truyền vào
+const bookEW = book.bind(eurowings);
+const bookLH = book.bind(lufthansa);
+const bookLX = book.bind(swiss);
+bookEW(23, "Steven");
+
+const bookEW23 = book.bind(eurowings, 23); // khi gọi bookEW thì flightNum luôn là 23
+bookEW23("tantan"); // ko can truyen flightNum nua
+bookEW23("martha"); // ko can truyen flightNum nua
+
+// With event listener
+lufthansa.planes = 300;
+lufthansa.buyPlane = function () {
+  console.log(this);
+  this.planes++;
+  console.log(this.planes);
+};
+
+document
+  .querySelector(".buy")
+  .addEventListener("click", lufthansa.buyPlane.bind(lufthansa));
+
+// Partial application
+const addTax = (rate, value) => value + value * rate;
+console.log(addTax(0.1, 200));
+
+const addVAT = addTax.bind(null, 0.23); // ko quan tâm đến this, chỉ cần preset cho rate
+// khi gọi addVAT thì rate luôn là 0.23
+
+console.log(addVAT(100));
+console.log(addVAT(300));
+// khác với default param vì cách như trên sẽ tạo ra 1 function cụ thể hơn
+// base on a more general function
+
+const addTaxRate = function (rate) {
+  return function (value) {
+    return value + value * rate;
+  };
+};
+
+const addVAT2 = addTaxRate(0, 23);
+console.log(addVAT(300));

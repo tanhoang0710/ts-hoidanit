@@ -54,6 +54,8 @@ type UserFagke = typeof tan;
 
 type Maximun_Color = 256;
 
+// KĨ THUẬT ĐỆ QUY SỬ DỤNG TYPE
+
 type ComputedRange<
   N extends number,
   Result extends Array<unknown> = []
@@ -71,4 +73,59 @@ const aasdf: RGB255 = {
   blue: 152,
   green: 1,
   red: 103,
+};
+
+const fruit = {
+  apple: 1,
+  banana: 3,
+};
+
+// KĨ THUẬT TẠO RA UNION TYPE
+type FruitCount = {
+  // chuyển sang type xong r lấy key của nó
+  [Key in keyof typeof fruit]: {
+    [K2 in Key]: number;
+  };
+}[keyof typeof fruit];
+
+type Entity =
+  | {
+      type: "user";
+    }
+  | {
+      type: "post";
+    }
+  | {
+      type: "comment";
+    };
+
+// type EntityID =
+//   | {
+//       type: "user";
+//       userId: number;
+//     }
+//   | {
+//       type: "post";
+//       postId: number;
+//     }
+//   | {
+//       type: "comment";
+//       commentId: number;
+//     };
+
+// STRING TEMPLATE
+type TestType = `${Colors}-${FromZeroTo256}`;
+const testType: TestType = "red-10";
+
+type EntityID = {
+  [EntityType in Entity["type"]]: {
+    type: EntityType;
+  } & {
+    [key in `${EntityType}Id`]: number;
+  };
+}[Entity["type"]];
+
+const entityId: EntityID = {
+  type: "user",
+  userId: 1,
 };
