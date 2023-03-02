@@ -129,3 +129,41 @@ const entityId: EntityID = {
   type: "user",
   userId: 1,
 };
+
+const atn = {
+  name: "tan",
+  age: "test",
+  company: {
+    address: "test",
+  },
+};
+
+function pickValue<Obj, FirstKey extends keyof Obj>(
+  obj: Obj,
+  key: FirstKey
+): Obj[FirstKey] {
+  return obj[key];
+}
+
+const ets = pickValue(atn, "company");
+
+// OMIT TYPES
+function removeKey<Obj, FirstKey extends keyof Obj>(
+  obj: Obj,
+  key: FirstKey
+): Omit<Obj, FirstKey> {
+  delete obj[key];
+  return obj;
+}
+const cv = removeKey(atn, "company");
+
+// remove keys
+function removeKeys<Obj, FirstKey extends keyof Obj>(
+  obj: Obj,
+  ...keys: FirstKey[]
+): Omit<Obj, FirstKey> {
+  keys.forEach((key) => delete obj[key]);
+  return obj;
+}
+
+const xcvxc = removeKeys(atn, "age", "name");
