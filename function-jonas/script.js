@@ -196,3 +196,15 @@ poll.displayResults.call({ answers: [5, 2, 3] });
 
 // [5, 2, 3]
 // [1, 5, 3, 9, 6, 1]
+
+const runOnce = () => {
+  console.log("This will never run again");
+};
+
+runOnce();
+runOnce();
+
+// IIFE
+(() => {
+  console.log("This will never run again");
+})();
